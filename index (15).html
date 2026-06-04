@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediScan — Assistance Médicale</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #040d1a;
+    --bg2: #060f20;
+    --panel: #081525;
+    --panel2: #0a1c30;
+    --border: #0e3a5c;
+    --accent: #00c8ff;
+    --accent2: #00ffa3;
+    --accent3: #ff4f6d;
+    --accent4: #ffd166;
+    --text: #cce8ff;
+    --text-dim: #4a7a9b;
+    --glow: 0 0 20px rgba(0,200,255,0.4);
+    --glow2: 0 0 20px rgba(0,255,163,0.4);
+    --glow3: 0 0 20px rgba(255,79,109,0.35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ══════════════════════ SCANLINES OVERLAY ══════════════════════ */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.015) 2px, rgba(0,200,255,0.015) 4px);
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* ══════════════════════ PAGE LOCK / FINGERPRINT ══════════════════════ */
+  #lock-screen {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, #071628 0%, #020810 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  #lock-screen.unlocking {
+    opacity: 0; transform: scale(1.05);
+    pointer-events: none;
+  }
+
+  .lock-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: var(--glow);
+    letter-spacing: 0.3em;
+    margin-bottom: 0.3rem;
+  }
+
+  .lock-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+
+  .fingerprint-btn {
+    position: relative;
+    width: 160px; height: 160px;
+    border: none; background: transparent;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .fp-rings {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+  }
+
+  .fp-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    opacity: 0.15;
+    animation: ring-pulse 3s ease-in-out infinite;
+  }
+
+  .fp-ring:nth-child(1) { inset: 0; animation-delay: 0s; }
+  .fp-ring:nth-child(2) { inset: 12px; animation-delay: 0.4s; }
+  .fp-ring:nth-child(3) { inset: 24px; animation-delay: 0.8s; }
+
+  @keyframes ring-pulse {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.03); }
+  }
+
+  .fp-core {
+    position: absolute; inset: 30px;
+    background: radial-gradient(circle, rgba(0,200,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    border: 1.5px solid rgba(0,200,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .fingerprint-btn:hover .fp-core {
+    border-color: var(--accent);
+    background: radial-gradient(circle, rgba(0,200,255,0.18) 0%, transparent 70%);
+    box-shadow: var(--glow);
+  }
+
+  .fingerprint-btn:active .fp-core {
+    background: radial-gradient(circle, rgba(0,200,255,0.35) 0%, transparent 70%);
+  }
+
+  .fp-svg {
+    width: 70px; height: 70px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(0,200,255,0.5));
+  }
+
+  .fingerprint-btn:hover .fp-svg { opacity: 1; }
+
+  .fp-scan-line {
+    position: absolute; left: 30px; right: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    top: 30px;
+    animation: scan-line 2s ease-in-out infinite;
+    opacity: 0;
+  }
+
+  .fingerprint-btn:hover .fp-scan-line,
+  .fingerprint-btn:active .fp-scan-line {
+    opacity: 1;
+  }
+
+  @keyframes scan-line {
+    0% { top: 30px; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: calc(100% - 30px); opacity: 0; }
+  }
+
+  .lock-label {
+    margin-top: 2.5rem;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    animation: blink-label 2s ease-in-out infinite;
+  }
+
+  @keyframes blink-label {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .lock-status {
+    margin-top: 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    height: 1.2em;
+    letter-spacing: 0.15em;
+  }
+
+  /* SCANNING STATE */
+  .fingerprint-btn.scanning .fp-core {
+    border-color: var(--accent2);
+    background: radial-gradient(circle, rgba(0,255,163,0.15) 0%, transparent 70%);
+    animation: fp-scanning 0.5s ease-in-out infinite alternate;
+  }
+
+  .fingerprint-btn.scanning .fp-scan-line {
+    opacity: 1;
+    background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+  }
+
+  @keyframes fp-scanning {
+    from { box-shadow: 0 0 10px rgba(0,255,163,0.3); }
+    to { box-shadow: 0 0 30px rgba(0,255,163,0.7); }
+  }
+
+  /* ══════════════════════ MAIN APP ══════════════════════ */
+  #app {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  #app.visible { display: flex; }
+
+  /* HEADER */
+  .app-header {
+    display: flex; align-items: center;
+    padding: 1rem 2rem;
+    background: linear-gradient(180deg, rgba(6,15,32,0.98) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(0,200,255,0.15);
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .app-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: var(--glow);
+    letter-spacing: 0.2em;
+  }
+
+  .app-logo span {
+    color: var(--accent2);
+    text-shadow: var(--glow2);
+  }
+
+  .header-divider {
+    width: 1px; height: 30px;
+    background: var(--border);
+    margin: 0 1.5rem;
+  }
+
+  .header-info {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .header-status {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent2);
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,163,0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(0,255,163,0); }
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    padding: 0 2rem;
+    border-bottom: 1px solid rgba(0,200,255,0.1);
+    background: rgba(8,21,37,0.5);
+    gap: 0.5rem;
+  }
+
+  .tab-btn {
+    padding: 1rem 1.8rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    text-shadow: var(--glow);
+  }
+
+  /* CONTENT */
+  .content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* EXAM CARDS GRID */
+  .exam-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .exam-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .exam-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
+    opacity: 0.6;
+  }
+
+  .exam-card:hover {
+    border-color: var(--card-accent);
+    box-shadow: 0 0 30px rgba(0,0,0,0.4), inset 0 0 30px rgba(0,0,0,0.2);
+  }
+
+  .exam-card[data-type="irm"] { --card-accent: #00c8ff; }
+  .exam-card[data-type="radio"] { --card-accent: #ffd166; }
+  .exam-card[data-type="echo"] { --card-accent: #00ffa3; }
+
+  .card-header {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--card-accent);
+    text-shadow: 0 0 10px var(--card-accent);
+  }
+
+  .card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* BODY PART SELECT */
+  .body-select-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .body-select {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1.2rem;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='%234a7a9b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 10px;
+    transition: border-color 0.3s ease;
+  }
+
+  .body-select:focus { border-color: var(--card-accent); }
+  .body-select option { background: #081525; }
+
+  /* RESULT DISPLAY */
+  .result-display {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 3px;
+    min-height: 140px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-placeholder {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+  }
+
+  .result-image-container {
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
+
+  .result-image-container.visible { display: flex; }
+
+  .result-image {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 2px;
+    filter: brightness(0.9) contrast(1.1);
+  }
+
+  .result-image-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--card-accent);
+    letter-spacing: 0.15em;
+    text-align: center;
+  }
+
+  /* EXAM LOADING */
+  .exam-loading {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .exam-loading.active { display: flex; }
+
+  .loading-bar-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .loading-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--card-accent);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px var(--card-accent);
+  }
+
+  .loading-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--card-accent);
+    letter-spacing: 0.1em;
+    animation: text-flicker 0.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes text-flicker {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+  }
+
+  /* ACTION BUTTON */
+  .action-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: transparent;
+    border: 1.5px solid var(--card-accent);
+    border-radius: 3px;
+    color: var(--card-accent);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .action-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--card-accent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .action-btn:hover::before { opacity: 0.08; }
+  .action-btn:hover { box-shadow: 0 0 20px rgba(0,0,0,0.3), 0 0 15px rgba(var(--card-accent-rgb), 0.2); }
+
+  .action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .action-btn span { position: relative; z-index: 1; }
+
+  /* ══════════════════════ SECTION PARAMÈTRES ══════════════════════ */
+  .params-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .param-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .param-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--param-color), transparent);
+  }
+
+  .param-card[data-param="ta"] { --param-color: #ff4f6d; }
+  .param-card[data-param="bpm"] { --param-color: #ff8c42; }
+  .param-card[data-param="spo2"] { --param-color: #00c8ff; }
+  .param-card[data-param="temp"] { --param-color: #ffd166; }
+
+  .param-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+  .param-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .param-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: var(--param-color);
+    text-shadow: 0 0 20px var(--param-color);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+    min-height: 3.2rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .param-unit {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.8rem;
+  }
+
+  .param-status {
+    display: inline-block;
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid;
+    margin-bottom: 1rem;
+  }
+
+  .param-status.normal {
+    color: var(--accent2);
+    border-color: var(--accent2);
+    background: rgba(0,255,163,0.07);
+  }
+
+  .param-status.warning {
+    color: var(--accent4);
+    border-color: var(--accent4);
+    background: rgba(255,209,102,0.07);
+  }
+
+  .param-status.alert {
+    color: var(--accent3);
+    border-color: var(--accent3);
+    background: rgba(255,79,109,0.07);
+    animation: alert-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes alert-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,79,109,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(255,79,109,0); }
+  }
+
+  .param-wave {
+    height: 35px;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 0.8rem;
+  }
+
+  .param-wave svg { width: 200%; animation: wave-scroll 2s linear infinite; }
+
+  @keyframes wave-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .param-norm {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .param-btn {
+    width: 100%;
+    padding: 0.6rem;
+    background: transparent;
+    border: 1px solid var(--param-color);
+    border-radius: 3px;
+    color: var(--param-color);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+  }
+
+  .param-btn:hover { background: rgba(255,255,255,0.04); }
+  .param-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .measuring-indicator {
+    display: none;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    margin: 0.5rem 0;
+  }
+
+  .measuring-indicator.active { display: flex; }
+
+  .measure-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--param-color);
+    animation: measure-bounce 0.6s ease-in-out infinite;
+  }
+
+  .measure-dot:nth-child(2) { animation-delay: 0.1s; }
+  .measure-dot:nth-child(3) { animation-delay: 0.2s; }
+
+  @keyframes measure-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ALL PARAMS BUTTON */
+  .all-params-btn {
+    display: block; width: 100%;
+    max-width: 400px; margin: 0 auto 2rem;
+    padding: 1rem;
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    border-radius: 4px;
+    color: var(--accent);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-align: center;
+  }
+
+  .all-params-btn:hover {
+    background: rgba(0,200,255,0.06);
+    box-shadow: var(--glow), inset 0 0 20px rgba(0,200,255,0.03);
+  }
+
+  /* ══════════════════════ IMAGE LIBRARY INFO ══════════════════════ */
+  .library-info {
+    background: rgba(0,200,255,0.04);
+    border: 1px solid rgba(0,200,255,0.15);
+    border-radius: 4px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  .library-info-icon { font-size: 1.2rem; }
+
+  /* ══════════════════════ SAMPLE IMAGES (placeholder) ══════════════════════ */
+  .img-placeholder {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at center, rgba(0,50,80,0.5) 0%, transparent 70%);
+    border: 1px dashed rgba(0,200,255,0.2);
+    border-radius: 2px;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-family: 'Share Tech Mono', monospace;
+    gap: 0.5rem;
+  }
+
+  .img-placeholder .img-icon { font-size: 2rem; opacity: 0.4; }
+  .img-placeholder .img-text { opacity: 0.6; }
+  .img-placeholder .img-path {
+    font-size: 0.65rem;
+    color: var(--accent);
+    opacity: 0.7;
+    background: rgba(0,0,0,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    border: 1px solid rgba(0,200,255,0.15);
+  }
+
+  /* ══════════════════════ CORNER DECORATIONS ══════════════════════ */
+  .corner-tl, .corner-tr, .corner-bl, .corner-br {
+    position: absolute; width: 12px; height: 12px;
+  }
+
+  .corner-tl { top: 0; left: 0; border-top: 2px solid var(--card-accent, var(--accent)); border-left: 2px solid var(--card-accent, var(--accent)); }
+  .corner-tr { top: 0; right: 0; border-top: 2px solid var(--card-accent, var(--accent)); border-right: 2px solid var(--card-accent, var(--accent)); }
+  .corner-bl { bottom: 0; left: 0; border-bottom: 2px solid var(--card-accent, var(--accent)); border-left: 2px solid var(--card-accent, var(--accent)); }
+  .corner-br { bottom: 0; right: 0; border-bottom: 2px solid var(--card-accent, var(--accent)); border-right: 2px solid var(--card-accent, var(--accent)); }
+
+  /* ══════════════════════ NOTIFICATIONS ══════════════════════ */
+  #notification {
+    position: fixed; top: 1.5rem; right: 1.5rem;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 0.8rem 1.2rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+    z-index: 500;
+    transform: translateX(calc(100% + 2rem));
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 300px;
+  }
+
+  #notification.show { transform: translateX(0); }
+
+  /* ══════════════════════ WAVEFORM PARAM ══════════════════════ */
+  .ecg-container {
+    height: 45px;
+    overflow: hidden;
+    margin-bottom: 0.8rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .ecg-canvas { width: 100%; height: 100%; }
+
+  /* ══════════════════════ RESPONSIVE ══════════════════════ */
+  @media (max-width: 600px) {
+    .content { padding: 1rem; }
+    .tab-btn { padding: 0.8rem 0.9rem; font-size: 0.65rem; }
+    .lock-logo { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ LOCK SCREEN ══════════════════════ -->
+<div id="lock-screen">
+  <div class="lock-logo">MEDI<span>SCAN</span></div>
+  <div class="lock-subtitle">Système d'Assistance Médicale v2.4</div>
+
+  <button class="fingerprint-btn" id="fpBtn" onclick="startScan()">
+    <div class="fp-rings">
+      <div class="fp-ring"></div>
+      <div class="fp-ring"></div>
+      <div class="fp-ring"></div>
+    </div>
+    <div class="fp-core">
+      <svg class="fp-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#00c8ff" stroke-width="2.5" stroke-linecap="round">
+        <!-- Fingerprint lines -->
+        <path d="M50 15 C65 15, 80 28, 80 45 C80 65, 65 80, 50 82 C35 80, 20 65, 20 45 C20 28, 35 15, 50 15"/>
+        <path d="M50 22 C62 22, 73 32, 73 45 C73 60, 62 73, 50 75 C38 73, 27 60, 27 45 C27 32, 38 22, 50 22"/>
+        <path d="M50 30 C59 30, 66 37, 66 45 C66 55, 59 64, 50 67 C41 64, 34 55, 34 45 C34 37, 41 30, 50 30"/>
+        <path d="M50 38 C56 38, 59 42, 59 45 C59 50, 56 56, 50 58 C44 56, 41 50, 41 45 C41 42, 44 38, 50 38"/>
+        <line x1="50" y1="45" x2="50" y2="46"/>
+        <path d="M50 8 C70 8, 88 24, 88 45 C88 70, 70 90, 50 92 C30 90, 12 70, 12 45 C12 24, 30 8, 50 8"/>
+      </svg>
+    </div>
+    <div class="fp-scan-line"></div>
+  </button>
+
+  <div class="lock-label">Poser le doigt pour scanner</div>
+  <div class="lock-status" id="lockStatus"></div>
+</div>
+
+<!-- ══════════════════════ MAIN APP ══════════════════════ -->
+<div id="app">
+  <header class="app-header">
+    <div class="app-logo">MEDI<span>SCAN</span></div>
+    <div class="header-divider"></div>
+    <div class="header-info" id="sessionTime">SESSION: --:--:--</div>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      SYSTÈME ACTIF
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('exams')">🩺 Examens</button>
+    <button class="tab-btn" onclick="switchTab('params')">📊 Paramètres</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════ EXAMENS ══════ -->
+    <div class="tab-content active" id="tab-exams">
+      <div class="section-title">Section Examen</div>
+
+      <div class="library-info">
+        <span class="library-info-icon">📁</span>
+        <span>Bibliothèque d'images — Placez vos images dans les dossiers : <strong>images/irm/</strong>, <strong>images/radio/</strong>, <strong>images/echo/</strong> et renseignez les noms de fichiers dans le script de configuration en bas de page.</span>
+      </div>
+
+      <div class="exam-grid">
+
+        <!-- IRM -->
+        <div class="exam-card" data-type="irm">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="card-header">
+            <div class="card-icon">🧲</div>
+            <div>
+              <div class="card-title">IRM</div>
+              <div class="card-subtitle">Imagerie par Résonance Magnétique</div>
+            </div>
+          </div>
+          <div class="body-select-label">Zone anatomique</div>
+          <select class="body-select" id="irm-zone">
+            <option value="">— Sélectionner —</option>
+            <option value="crane">Crâne / Cerveau</option>
+            <option value="colonne">Colonne vertébrale</option>
+            <option value="abdomen">Abdomen</option>
+            <option value="genou">Genou</option>
+            <option value="epaule">Épaule</option>
+            <option value="cheville">Cheville</option>
+            <option value="hanche">Hanche</option>
+            <option value="poignet">Poignet</option>
+          </select>
+          <div class="result-display" id="irm-result">
+            <div class="exam-loading" id="irm-loading">
+              <div class="loading-bar-track"><div class="loading-bar-fill" id="irm-bar"></div></div>
+              <div class="loading-text" id="irm-loading-text">Initialisation...</div>
+            </div>
+            <div class="result-placeholder" id="irm-placeholder">
+              <div>⬡</div>
+              <div>Sélectionner une zone</div>
+              <div>puis lancer l'examen</div>
+            </div>
+            <div class="result-image-container" id="irm-img-container">
+              <img class="result-image" id="irm-img" src="" alt="IRM">
+              <div class="result-image-label" id="irm-img-label"></div>
+            </div>
+          </div>
+          <button class="action-btn" id="irm-btn" onclick="startExam('irm')">
+            <span>⟡ Démarrer l'examen IRM</span>
+          </button>
+        </div>
+
+        <!-- RADIOLOGIE -->
+        <div class="exam-card" data-type="radio">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="card-header">
+            <div class="card-icon">☢️</div>
+            <div>
+              <div class="card-title">Radiologie</div>
+              <div class="card-subtitle">Imagerie par Rayons X</div>
+            </div>
+          </div>
+          <div class="body-select-label">Zone anatomique</div>
+          <select class="body-select" id="radio-zone">
+            <option value="">— Sélectionner —</option>
+            <option value="thorax">Thorax / Poumons</option>
+            <option value="main">Main / Doigts</option>
+            <option value="pied">Pied / Orteils</option>
+            <option value="bassin">Bassin</option>
+            <option value="colonne">Rachis lombaire</option>
+            <option value="crane">Crâne</option>
+            <option value="avant-bras">Avant-bras</option>
+            <option value="jambe">Jambe / Fibula</option>
+          </select>
+          <div class="result-display" id="radio-result">
+            <div class="exam-loading" id="radio-loading">
+              <div class="loading-bar-track"><div class="loading-bar-fill" id="radio-bar"></div></div>
+              <div class="loading-text" id="radio-loading-text">Initialisation...</div>
+            </div>
+            <div class="result-placeholder" id="radio-placeholder">
+              <div>⬡</div>
+              <div>Sélectionner une zone</div>
+              <div>puis lancer l'examen</div>
+            </div>
+            <div class="result-image-container" id="radio-img-container">
+              <img class="result-image" id="radio-img" src="" alt="Radio">
+              <div class="result-image-label" id="radio-img-label"></div>
+            </div>
+          </div>
+          <button class="action-btn" id="radio-btn" onclick="startExam('radio')">
+            <span>⟡ Démarrer l'examen Radiologique</span>
+          </button>
+        </div>
+
+        <!-- ÉCHOGRAPHIE -->
+        <div class="exam-card" data-type="echo">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="card-header">
+            <div class="card-icon">🔊</div>
+            <div>
+              <div class="card-title">Échographie</div>
+              <div class="card-subtitle">Imagerie par Ultrasons</div>
+            </div>
+          </div>
+          <div class="body-select-label">Zone anatomique</div>
+          <select class="body-select" id="echo-zone">
+            <option value="">— Sélectionner —</option>
+            <option value="abdomen">Abdomen complet</option>
+            <option value="cardiaque">Cardiaque (Écho cœur)</option>
+            <option value="thyroide">Thyroïde</option>
+            <option value="vesicule">Vésicule biliaire</option>
+            <option value="reins">Reins</option>
+            <option value="col-uterus">Col utérin / Pelvis</option>
+            <option value="testicule">Testicules</option>
+            <option value="sein">Sein</option>
+          </select>
+          <div class="result-display" id="echo-result">
+            <div class="exam-loading" id="echo-loading">
+              <div class="loading-bar-track"><div class="loading-bar-fill" id="echo-bar"></div></div>
+              <div class="loading-text" id="echo-loading-text">Initialisation...</div>
+            </div>
+            <div class="result-placeholder" id="echo-placeholder">
+              <div>⬡</div>
+              <div>Sélectionner une zone</div>
+              <div>puis lancer l'examen</div>
+            </div>
+            <div class="result-image-container" id="echo-img-container">
+              <img class="result-image" id="echo-img" src="" alt="Échographie">
+              <div class="result-image-label" id="echo-img-label"></div>
+            </div>
+          </div>
+          <button class="action-btn" id="echo-btn" onclick="startExam('echo')">
+            <span>⟡ Démarrer l'échographie</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════ PARAMÈTRES ══════ -->
+    <div class="tab-content" id="tab-params">
+      <div class="section-title">Section Paramètres Vitaux</div>
+
+      <button class="all-params-btn" onclick="measureAllParams()">
+        ⟡ Prise de Paramètre Complète
+      </button>
+
+      <div class="params-grid">
+
+        <!-- TENSION ARTÉRIELLE -->
+        <div class="param-card" data-param="ta">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="param-icon">🫀</div>
+          <div class="param-name">Tension Artérielle</div>
+          <div class="ecg-container"><canvas class="ecg-canvas" id="ecg-ta"></canvas></div>
+          <div class="param-value" id="val-ta">—/—</div>
+          <div class="param-unit">mmHg</div>
+          <div class="measuring-indicator" id="meas-ta">
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+          </div>
+          <div class="param-status normal" id="status-ta">EN ATTENTE</div>
+          <div class="param-norm">Norme : 120/80 mmHg</div>
+          <button class="param-btn" onclick="measureParam('ta')">Mesurer TA</button>
+        </div>
+
+        <!-- BPM -->
+        <div class="param-card" data-param="bpm">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="param-icon">💓</div>
+          <div class="param-name">Pulsations</div>
+          <div class="ecg-container"><canvas class="ecg-canvas" id="ecg-bpm"></canvas></div>
+          <div class="param-value" id="val-bpm">—</div>
+          <div class="param-unit">BPM</div>
+          <div class="measuring-indicator" id="meas-bpm">
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+          </div>
+          <div class="param-status normal" id="status-bpm">EN ATTENTE</div>
+          <div class="param-norm">Norme : 60 – 100 BPM</div>
+          <button class="param-btn" onclick="measureParam('bpm')">Mesurer Pouls</button>
+        </div>
+
+        <!-- SPO2 -->
+        <div class="param-card" data-param="spo2">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="param-icon">🫁</div>
+          <div class="param-name">Saturation O₂</div>
+          <div class="ecg-container"><canvas class="ecg-canvas" id="ecg-spo2"></canvas></div>
+          <div class="param-value" id="val-spo2">—</div>
+          <div class="param-unit">%</div>
+          <div class="measuring-indicator" id="meas-spo2">
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+          </div>
+          <div class="param-status normal" id="status-spo2">EN ATTENTE</div>
+          <div class="param-norm">Norme : ≥ 98%</div>
+          <button class="param-btn" onclick="measureParam('spo2')">Mesurer SpO₂</button>
+        </div>
+
+        <!-- TEMPÉRATURE -->
+        <div class="param-card" data-param="temp">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="param-icon">🌡️</div>
+          <div class="param-name">Température</div>
+          <div class="ecg-container"><canvas class="ecg-canvas" id="ecg-temp"></canvas></div>
+          <div class="param-value" id="val-temp">—</div>
+          <div class="param-unit">°C</div>
+          <div class="measuring-indicator" id="meas-temp">
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+            <div class="measure-dot"></div>
+          </div>
+          <div class="param-status normal" id="status-temp">EN ATTENTE</div>
+          <div class="param-norm">Norme : 36.5°C – 37.5°C</div>
+          <button class="param-btn" onclick="measureParam('temp')">Mesurer Température</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<div id="notification"></div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     CONFIGURATION BIBLIOTHÈQUE D'IMAGES
+     Renseignez ici vos images pour chaque type et zone.
+     Format : { "zone": ["image1.jpg", "image2.jpg", ...] }
+════════════════════════════════════════════════════════════════ -->
+<script>
+const IMAGE_LIBRARY = {
+  irm: {
+    crane:    ["images/irm/crane_01.jpg", "images/irm/crane_02.jpg"],
+    colonne:  ["images/irm/colonne_01.jpg"],
+    abdomen:  ["images/irm/abdomen_01.jpg", "images/irm/abdomen_02.jpg"],
+    genou:    ["images/irm/genou_01.jpg", "images/irm/genou_02.jpg"],
+    epaule:   ["images/irm/epaule_01.jpg"],
+    cheville: ["images/irm/cheville_01.jpg"],
+    hanche:   ["images/irm/hanche_01.jpg"],
+    poignet:  ["images/irm/poignet_01.jpg"],
+  },
+  radio: {
+    thorax:     ["images/radio/thorax_01.jpg", "images/radio/thorax_02.jpg"],
+    main:       ["images/radio/main_01.jpg"],
+    pied:       ["images/radio/pied_01.jpg", "images/radio/pied_02.jpg"],
+    bassin:     ["images/radio/bassin_01.jpg"],
+    colonne:    ["images/radio/rachis_01.jpg"],
+    crane:      ["images/radio/crane_01.jpg"],
+    "avant-bras": ["images/radio/avant-bras_01.jpg"],
+    jambe:      ["images/radio/jambe_01.jpg"],
+  },
+  echo: {
+    abdomen:      ["images/echo/abdomen_01.jpg", "images/echo/abdomen_02.jpg"],
+    cardiaque:    ["images/echo/coeur_01.jpg", "images/echo/coeur_02.jpg"],
+    thyroide:     ["images/echo/thyroide_01.jpg"],
+    vesicule:     ["images/echo/vesicule_01.jpg"],
+    reins:        ["images/echo/reins_01.jpg"],
+    "col-uterus": ["images/echo/pelvis_01.jpg"],
+    testicule:    ["images/echo/testicule_01.jpg"],
+    sein:         ["images/echo/sein_01.jpg"],
+  }
+};
+</script>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// AUDIO ENGINE — Sons générés par Web Audio API
+// ══════════════════════════════════════════════════════════════
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx;
+
+function getCtx() {
+  if (!ctx) ctx = new AudioCtx();
+  return ctx;
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.15, delay = 0) {
+  const ac = getCtx();
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.connect(gain); gain.connect(ac.destination);
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, ac.currentTime + delay);
+  gain.gain.linearRampToValueAtTime(volume, ac.currentTime + delay + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + delay + duration);
+  osc.start(ac.currentTime + delay);
+  osc.stop(ac.currentTime + delay + duration + 0.05);
+}
+
+function playNoise(duration, volume = 0.05, delay = 0) {
+  const ac = getCtx();
+  const bufSize = ac.sampleRate * duration;
+  const buf = ac.createBuffer(1, bufSize, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource();
+  const gain = ac.createGain();
+  const filter = ac.createBiquadFilter();
+  filter.type = 'bandpass'; filter.frequency.value = 1500; filter.Q.value = 0.5;
+  src.buffer = buf;
+  src.connect(filter); filter.connect(gain); gain.connect(ac.destination);
+  gain.gain.setValueAtTime(volume, ac.currentTime + delay);
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + delay + duration);
+  src.start(ac.currentTime + delay); src.stop(ac.currentTime + delay + duration + 0.05);
+}
+
+// Son scan empreinte
+function sfxFingerprint() {
+  playNoise(0.3, 0.04);
+  playTone(300, 0.2, 'sine', 0.08, 0.05);
+  playTone(600, 0.3, 'sine', 0.1, 0.1);
+  playTone(900, 0.15, 'sine', 0.06, 0.3);
+}
+
+// Son accès validé
+function sfxUnlock() {
+  [523, 659, 784, 1047].forEach((f, i) => playTone(f, 0.18, 'sine', 0.12, i * 0.1));
+}
+
+// Son IRM — bruit magnétique sourd
+function sfxIRM() {
+  const ac = getCtx();
+  for (let i = 0; i < 8; i++) {
+    playTone(80 + Math.random() * 40, 0.15, 'square', 0.06, i * 0.18);
+    playNoise(0.1, 0.03, i * 0.18 + 0.05);
+  }
+  playTone(200, 0.5, 'sine', 0.04, 1.5);
+}
+
+// Son Radio — bip court + clac
+function sfxRadio() {
+  playTone(1200, 0.05, 'square', 0.1);
+  playNoise(0.08, 0.12, 0.02);
+  playTone(800, 0.1, 'sine', 0.05, 0.5);
+  playTone(1000, 0.05, 'square', 0.08, 1.2);
+  playNoise(0.05, 0.1, 1.2);
+}
+
+// Son Écho — ultrasons pulsés
+function sfxEcho() {
+  for (let i = 0; i < 12; i++) {
+    playTone(2000 + Math.random() * 1000, 0.06, 'sine', 0.04, i * 0.12);
+  }
+  playTone(400, 0.3, 'sine', 0.03, 1.4);
+}
+
+// Son résultat OK
+function sfxSuccess() {
+  playTone(880, 0.12, 'sine', 0.08);
+  playTone(1100, 0.15, 'sine', 0.1, 0.15);
+}
+
+// Son mesure TA
+function sfxMesureTA() {
+  for (let i = 0; i < 5; i++) playTone(120, 0.08, 'square', 0.05, i * 0.25);
+}
+
+// Son mesure BPM
+function sfxMesureBPM() {
+  for (let i = 0; i < 6; i++) {
+    playTone(440, 0.05, 'sine', 0.12, i * 0.18);
+    playTone(880, 0.03, 'sine', 0.06, i * 0.18 + 0.04);
+  }
+}
+
+// Son mesure SpO2
+function sfxMesureSpo2() {
+  for (let i = 0; i < 8; i++) playTone(1800 - i * 50, 0.07, 'sine', 0.04, i * 0.14);
+}
+
+// Son mesure Température
+function sfxMesureTemp() {
+  playTone(600, 0.8, 'sine', 0.04);
+  playTone(620, 0.8, 'sine', 0.02, 0.1);
+}
+
+// Son alerte
+function sfxAlert() {
+  [800, 600, 800, 600].forEach((f, i) => playTone(f, 0.12, 'square', 0.1, i * 0.18));
+}
+
+// Son param normal
+function sfxParamNormal() {
+  playTone(660, 0.1, 'sine', 0.08);
+  playTone(880, 0.15, 'sine', 0.08, 0.12);
+}
+
+// ══════════════════════════════════════════════════════════════
+// LOCK SCREEN
+// ══════════════════════════════════════════════════════════════
+let scanRunning = false;
+
+function startScan() {
+  if (scanRunning) return;
+  scanRunning = true;
+  const btn = document.getElementById('fpBtn');
+  const status = document.getElementById('lockStatus');
+  btn.classList.add('scanning');
+  sfxFingerprint();
+
+  const msgs = [
+    'Lecture de l\'empreinte...',
+    'Analyse biométrique...',
+    'Vérification identité...',
+    'Accès autorisé ✓'
+  ];
+  let i = 0;
+  status.textContent = msgs[0];
+  const iv = setInterval(() => {
+    i++;
+    if (i < msgs.length) {
+      status.textContent = msgs[i];
+      if (i === 1) sfxFingerprint();
+    } else {
+      clearInterval(iv);
+      sfxUnlock();
+      setTimeout(unlockApp, 400);
+    }
+  }, 600);
+}
+
+function unlockApp() {
+  document.getElementById('lock-screen').classList.add('unlocking');
+  setTimeout(() => {
+    document.getElementById('lock-screen').style.display = 'none';
+    const app = document.getElementById('app');
+    app.classList.add('visible');
+    startSessionTimer();
+    initECGCanvases();
+    showNotification('Bienvenue — Système médical activé');
+  }, 800);
+}
+
+// ══════════════════════════════════════════════════════════════
+// SESSION TIMER
+// ══════════════════════════════════════════════════════════════
+let sessionStart;
+function startSessionTimer() {
+  sessionStart = Date.now();
+  setInterval(() => {
+    const d = Math.floor((Date.now() - sessionStart) / 1000);
+    const h = String(Math.floor(d / 3600)).padStart(2, '0');
+    const m = String(Math.floor((d % 3600) / 60)).padStart(2, '0');
+    const s = String(d % 60).padStart(2, '0');
+    document.getElementById('sessionTime').textContent = `SESSION: ${h}:${m}:${s}`;
+  }, 1000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.tab-btn[onclick="switchTab('${name}')"]`).classList.add('active');
+  document.getElementById(`tab-${name}`).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════
+// EXAM ENGINE
+// ══════════════════════════════════════════════════════════════
+const EXAM_STEPS = {
+  irm: [
+    'Initialisation séquence T1...',
+    'Calibration champ magnétique...',
+    'Acquisition coupes axiales...',
+    'Reconstruction 3D...',
+    'Traitement post-acquisition...',
+    'Image prête ✓'
+  ],
+  radio: [
+    'Positionnement détecteur...',
+    'Réglage paramètres kV/mAs...',
+    'Exposition rayons X...',
+    'Développement numérique...',
+    'Optimisation contraste...',
+    'Cliché disponible ✓'
+  ],
+  echo: [
+    'Activation transducteur...',
+    'Réglage fréquence ultrasons...',
+    'Acquisition mode B...',
+    'Traitement doppler...',
+    'Reconstruction échographique...',
+    'Image disponible ✓'
+  ]
+};
+
+const EXAM_SFX = { irm: sfxIRM, radio: sfxRadio, echo: sfxEcho };
+const EXAM_DURATION = { irm: 4000, radio: 2500, echo: 3000 };
+
+function startExam(type) {
+  const zone = document.getElementById(`${type}-zone`).value;
+  if (!zone) { showNotification('⚠ Veuillez sélectionner une zone anatomique', 'warn'); return; }
+
+  const btn = document.getElementById(`${type}-btn`);
+  const loading = document.getElementById(`${type}-loading`);
+  const placeholder = document.getElementById(`${type}-placeholder`);
+  const imgContainer = document.getElementById(`${type}-img-container`);
+  const bar = document.getElementById(`${type}-bar`);
+  const loadingText = document.getElementById(`${type}-loading-text`);
+
+  btn.disabled = true;
+  placeholder.style.display = 'none';
+  imgContainer.classList.remove('visible');
+  loading.classList.add('active');
+  bar.style.width = '0%';
+
+  EXAM_SFX[type]();
+
+  const steps = EXAM_STEPS[type];
+  const duration = EXAM_DURATION[type];
+  const stepTime = duration / steps.length;
+  let step = 0;
+
+  loadingText.textContent = steps[0];
+
+  const iv = setInterval(() => {
+    step++;
+    if (step < steps.length) {
+      loadingText.textContent = steps[step];
+      bar.style.width = ((step / (steps.length - 1)) * 100) + '%';
+    } else {
+      clearInterval(iv);
+      bar.style.width = '100%';
+      setTimeout(() => showExamResult(type, zone, loading, imgContainer, placeholder, btn), 300);
+    }
+  }, stepTime);
+
+  // Animate bar smoothly
+  let pct = 0;
+  const barInterval = setInterval(() => {
+    pct = Math.min(pct + 1, 98);
+    bar.style.width = pct + '%';
+    if (pct >= 98) clearInterval(barInterval);
+  }, duration / 100);
+}
+
+function showExamResult(type, zone, loading, imgContainer, placeholder, btn) {
+  sfxSuccess();
+  loading.classList.remove('active');
+
+  const lib = IMAGE_LIBRARY[type][zone];
+  if (lib && lib.length > 0) {
+    const src = lib[Math.floor(Math.random() * lib.length)];
+    const img = document.getElementById(`${type}-img`);
+    const label = document.getElementById(`${type}-img-label`);
+
+    img.onerror = () => {
+      // Image not found — show placeholder info
+      loading.classList.remove('active');
+      imgContainer.classList.add('visible');
+      img.style.display = 'none';
+      label.innerHTML = `<div class="img-placeholder">
+        <div class="img-icon">🖼️</div>
+        <div class="img-text">Image non trouvée</div>
+        <div class="img-path">${src}</div>
+      </div>`;
+      label.style.width = '100%';
+    };
+
+    img.onload = () => { img.style.display = ''; };
+    img.src = src;
+    img.style.display = '';
+    label.style.width = '';
+
+    const typeName = { irm: 'IRM', radio: 'RADIO', echo: 'ÉCHO' }[type];
+    label.textContent = `${typeName} — ${zone.toUpperCase()} | Séquence #${String(Math.floor(Math.random() * 9999)).padStart(4,'0')}`;
+    imgContainer.classList.add('visible');
+  } else {
+    placeholder.innerHTML = '<div>Aucune image configurée<br>pour cette zone</div>';
+    placeholder.style.display = '';
+  }
+
+  btn.disabled = false;
+  showNotification(`Examen ${type.toUpperCase()} terminé — ${zone}`);
+}
+
+// ══════════════════════════════════════════════════════════════
+// PARAMÈTRES VITAUX
+// ══════════════════════════════════════════════════════════════
+function rand(min, max, decimals = 0) {
+  const v = Math.random() * (max - min) + min;
+  return decimals > 0 ? parseFloat(v.toFixed(decimals)) : Math.round(v);
+}
+
+const PARAM_CONFIG = {
+  ta: {
+    sfx: sfxMesureTA,
+    generate: () => {
+      // ~70% normal, ~20% pré-hypertension, ~10% alerte
+      const r = Math.random();
+      if (r < 0.7) {
+        return { value: `${rand(110,130)}/${rand(70,85)}`, status: 'normal', label: 'NORMAL' };
+      } else if (r < 0.9) {
+        return { value: `${rand(130,149)}/${rand(85,94)}`, status: 'warning', label: 'ÉLEVÉE' };
+      } else {
+        return { value: `${rand(150,180)}/${rand(95,110)}`, status: 'alert', label: 'HYPERTENSION' };
+      }
+    },
+    delay: 2200
+  },
+  bpm: {
+    sfx: sfxMesureBPM,
+    generate: () => {
+      const r = Math.random();
+      if (r < 0.75) return { value: rand(62, 98), status: 'normal', label: 'NORMAL' };
+      if (r < 0.88) return { value: rand(100, 130), status: 'warning', label: 'TACHYCARDIE' };
+      return { value: rand(35, 59), status: 'alert', label: 'BRADYCARDIE' };
+    },
+    delay: 1800
+  },
+  spo2: {
+    sfx: sfxMesureSpo2,
+    generate: () => {
+      const r = Math.random();
+      if (r < 0.8) return { value: rand(98, 100), status: 'normal', label: 'NORMAL' };
+      if (r < 0.92) return { value: rand(94, 97), status: 'warning', label: 'LIMITE' };
+      return { value: rand(85, 93), status: 'alert', label: 'DÉSATURATION' };
+    },
+    delay: 1600
+  },
+  temp: {
+    sfx: sfxMesureTemp,
+    generate: () => {
+      const r = Math.random();
+      if (r < 0.75) return { value: rand(36.5, 37.5, 1), status: 'normal', label: 'NORMAL' };
+      if (r < 0.9) return { value: rand(37.5, 39.0, 1), status: 'warning', label: 'HYPERTHERMIE' };
+      return { value: rand(39.0, 41.0, 1), status: 'alert', label: 'FIÈVRE ÉLEVÉE' };
+    },
+    delay: 2000
+  }
+};
+
+const paramBusy = { ta: false, bpm: false, spo2: false, temp: false };
+
+function measureParam(id) {
+  if (paramBusy[id]) return;
+  paramBusy[id] = true;
+
+  const config = PARAM_CONFIG[id];
+  config.sfx();
+
+  const valEl = document.getElementById(`val-${id}`);
+  const statusEl = document.getElementById(`status-${id}`);
+  const measEl = document.getElementById(`meas-${id}`);
+  const btn = document.querySelector(`[data-param="${id}"] .param-btn`);
+
+  valEl.textContent = '...';
+  statusEl.textContent = 'MESURE...';
+  statusEl.className = 'param-status normal';
+  measEl.classList.add('active');
+  btn.disabled = true;
+
+  // Animate value counting up
+  let tick = 0;
+  const scramble = setInterval(() => {
+    tick++;
+    valEl.textContent = Math.random() > 0.5 ? '—' : Math.floor(Math.random() * 999);
+    if (tick > 5) clearInterval(scramble);
+  }, 200);
+
+  setTimeout(() => {
+    const result = config.generate();
+    measEl.classList.remove('active');
+    valEl.textContent = result.value;
+    statusEl.textContent = result.label;
+    statusEl.className = `param-status ${result.status}`;
+    btn.disabled = false;
+    paramBusy[id] = false;
+
+    if (result.status === 'alert') sfxAlert();
+    else if (result.status === 'warning') sfxAlert();
+    else sfxParamNormal();
+
+    showNotification(`${id.toUpperCase()}: ${result.value} — ${result.label}`);
+    animateECG(id, result.status);
+  }, config.delay);
+}
+
+function measureAllParams() {
+  ['ta','bpm','spo2','temp'].forEach((id, i) => {
+    setTimeout(() => measureParam(id), i * 600);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// ECG CANVAS ANIMATION
+// ══════════════════════════════════════════════════════════════
+const ecgAnimations = {};
+
+function initECGCanvases() {
+  ['ta','bpm','spo2','temp'].forEach(id => drawIdleECG(id));
+}
+
+function drawIdleECG(id) {
+  const canvas = document.getElementById(`ecg-${id}`);
+  if (!canvas) return;
+  const ctx2 = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  const w = canvas.width; const h = canvas.height;
+  const colors = { ta: '#ff4f6d', bpm: '#ff8c42', spo2: '#00c8ff', temp: '#ffd166' };
+  const c = colors[id];
+
+  ctx2.clearRect(0, 0, w, h);
+  ctx2.strokeStyle = c + '40';
+  ctx2.lineWidth = 1;
+  ctx2.beginPath();
+  for (let x = 0; x < w; x++) {
+    const y = h / 2 + Math.sin(x * 0.15) * 4;
+    x === 0 ? ctx2.moveTo(x, y) : ctx2.lineTo(x, y);
+  }
+  ctx2.stroke();
+}
+
+function animateECG(id, status) {
+  const canvas = document.getElementById(`ecg-${id}`);
+  if (!canvas) return;
+  const ctx2 = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  const w = canvas.width; const h = canvas.height;
+  const colors = { ta: '#ff4f6d', bpm: '#ff8c42', spo2: '#00c8ff', temp: '#ffd166' };
+  const c = colors[id];
+
+  if (ecgAnimations[id]) cancelAnimationFrame(ecgAnimations[id]);
+
+  let offset = 0;
+  const amplitude = status === 'alert' ? 18 : status === 'warning' ? 12 : 8;
+
+  function drawECGWave(x, h, amplitude, id) {
+    const mid = h / 2;
+    // Simulate ECG: flat, P wave, QRS complex, T wave
+    const pos = x % 120;
+    if (pos < 30) return mid + Math.sin(pos * 0.2) * (amplitude * 0.3);
+    if (pos < 40) return mid - Math.sin((pos - 30) * 0.3) * (amplitude * 0.5);
+    if (pos < 43) return mid + amplitude * 2.5;
+    if (pos < 46) return mid - amplitude * 1.5;
+    if (pos < 50) return mid + amplitude * 0.8;
+    if (pos < 70) return mid + Math.sin((pos - 50) * 0.15) * (amplitude * 0.6);
+    return mid;
+  }
+
+  function draw() {
+    ctx2.clearRect(0, 0, w, h);
+    ctx2.shadowBlur = 6;
+    ctx2.shadowColor = c;
+    ctx2.strokeStyle = c;
+    ctx2.lineWidth = 1.5;
+    ctx2.beginPath();
+    for (let x = 0; x < w; x++) {
+      const y = drawECGWave(x + offset, h, amplitude, id);
+      x === 0 ? ctx2.moveTo(x, y) : ctx2.lineTo(x, y);
+    }
+    ctx2.stroke();
+    offset = (offset + 2) % 120;
+    ecgAnimations[id] = requestAnimationFrame(draw);
+  }
+
+  draw();
+  setTimeout(() => {
+    if (ecgAnimations[id]) cancelAnimationFrame(ecgAnimations[id]);
+    drawIdleECG(id);
+  }, 5000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════════════
+let notifTimer;
+function showNotification(msg, type = 'info') {
+  const el = document.getElementById('notification');
+  el.textContent = msg;
+  el.style.borderLeftColor = type === 'warn' ? '#ffd166' : '#00c8ff';
+  el.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
