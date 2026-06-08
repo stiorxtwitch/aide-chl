@@ -34,7 +34,6 @@
     cursor: default;
   }
 
-  /* ══════════════════════ SCANLINES OVERLAY ══════════════════════ */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -42,7 +41,6 @@
     pointer-events: none; z-index: 9999;
   }
 
-  /* ══════════════════════ PAGE LOCK / FINGERPRINT ══════════════════════ */
   #lock-screen {
     position: fixed; inset: 0;
     background: radial-gradient(ellipse at center, #071628 0%, #020810 100%);
@@ -83,10 +81,7 @@
     outline: none;
   }
 
-  .fp-rings {
-    position: absolute; inset: 0;
-    border-radius: 50%;
-  }
+  .fp-rings { position: absolute; inset: 0; border-radius: 50%; }
 
   .fp-ring {
     position: absolute;
@@ -143,9 +138,7 @@
   }
 
   .fingerprint-btn:hover .fp-scan-line,
-  .fingerprint-btn:active .fp-scan-line {
-    opacity: 1;
-  }
+  .fingerprint-btn:active .fp-scan-line { opacity: 1; }
 
   @keyframes scan-line {
     0% { top: 30px; opacity: 0; }
@@ -177,7 +170,6 @@
     letter-spacing: 0.15em;
   }
 
-  /* SCANNING STATE */
   .fingerprint-btn.scanning .fp-core {
     border-color: var(--accent2);
     background: radial-gradient(circle, rgba(0,255,163,0.15) 0%, transparent 70%);
@@ -194,16 +186,9 @@
     to { box-shadow: 0 0 30px rgba(0,255,163,0.7); }
   }
 
-  /* ══════════════════════ MAIN APP ══════════════════════ */
-  #app {
-    display: none;
-    min-height: 100vh;
-    flex-direction: column;
-  }
-
+  #app { display: none; min-height: 100vh; flex-direction: column; }
   #app.visible { display: flex; }
 
-  /* HEADER */
   .app-header {
     display: flex; align-items: center;
     padding: 1rem 2rem;
@@ -222,16 +207,9 @@
     letter-spacing: 0.2em;
   }
 
-  .app-logo span {
-    color: var(--accent2);
-    text-shadow: var(--glow2);
-  }
+  .app-logo span { color: var(--accent2); text-shadow: var(--glow2); }
 
-  .header-divider {
-    width: 1px; height: 30px;
-    background: var(--border);
-    margin: 0 1.5rem;
-  }
+  .header-divider { width: 1px; height: 30px; background: var(--border); margin: 0 1.5rem; }
 
   .header-info {
     font-size: 0.75rem;
@@ -260,7 +238,6 @@
     50% { box-shadow: 0 0 0 6px rgba(0,255,163,0); }
   }
 
-  /* TABS */
   .tab-bar {
     display: flex;
     padding: 0 2rem;
@@ -284,13 +261,8 @@
   }
 
   .tab-btn:hover { color: var(--text); }
-  .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-    text-shadow: var(--glow);
-  }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); text-shadow: var(--glow); }
 
-  /* CONTENT */
   .content {
     flex: 1;
     padding: 2rem;
@@ -302,7 +274,6 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* SECTION TITLE */
   .section-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 0.7rem;
@@ -320,7 +291,6 @@
     background: linear-gradient(90deg, var(--border), transparent);
   }
 
-  /* EXAM CARDS GRID */
   .exam-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -355,10 +325,7 @@
   .exam-card[data-type="radio"] { --card-accent: #ffd166; }
   .exam-card[data-type="echo"] { --card-accent: #00ffa3; }
 
-  .card-header {
-    display: flex; align-items: center; gap: 1rem;
-    margin-bottom: 1.2rem;
-  }
+  .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
 
   .card-icon {
     width: 42px; height: 42px;
@@ -378,13 +345,8 @@
     text-shadow: 0 0 10px var(--card-accent);
   }
 
-  .card-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-  }
+  .card-subtitle { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.1em; }
 
-  /* BODY PART SELECT */
   .body-select-label {
     font-size: 0.75rem;
     color: var(--text-dim);
@@ -416,7 +378,6 @@
   .body-select:focus { border-color: var(--card-accent); }
   .body-select option { background: #081525; }
 
-  /* RESULT DISPLAY */
   .result-display {
     background: rgba(0,0,0,0.4);
     border: 1px solid rgba(255,255,255,0.05);
@@ -428,12 +389,7 @@
     overflow: hidden;
   }
 
-  .result-placeholder {
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
-    text-align: center;
-  }
+  .result-placeholder { color: var(--text-dim); font-size: 0.8rem; letter-spacing: 0.2em; text-align: center; }
 
   .result-image-container {
     width: 100%; height: 100%;
@@ -462,25 +418,10 @@
     text-align: center;
   }
 
-  /* EXAM LOADING */
-  .exam-loading {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 1rem;
-    width: 100%;
-  }
-
+  .exam-loading { display: none; flex-direction: column; align-items: center; gap: 0.8rem; padding: 1rem; width: 100%; }
   .exam-loading.active { display: flex; }
 
-  .loading-bar-track {
-    width: 100%;
-    height: 3px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 2px;
-    overflow: hidden;
-  }
+  .loading-bar-track { width: 100%; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
 
   .loading-bar-fill {
     height: 100%;
@@ -499,12 +440,8 @@
     animation: text-flicker 0.5s ease-in-out infinite alternate;
   }
 
-  @keyframes text-flicker {
-    from { opacity: 0.7; }
-    to { opacity: 1; }
-  }
+  @keyframes text-flicker { from { opacity: 0.7; } to { opacity: 1; } }
 
-  /* ACTION BUTTON */
   .action-btn {
     width: 100%;
     padding: 0.75rem;
@@ -531,16 +468,10 @@
   }
 
   .action-btn:hover::before { opacity: 0.08; }
-  .action-btn:hover { box-shadow: 0 0 20px rgba(0,0,0,0.3), 0 0 15px rgba(var(--card-accent-rgb), 0.2); }
-
-  .action-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
+  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .action-btn span { position: relative; z-index: 1; }
 
-  /* ══════════════════════ SECTION PARAMÈTRES ══════════════════════ */
+  /* PARAMÈTRES */
   .params-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -566,10 +497,11 @@
     background: linear-gradient(90deg, transparent, var(--param-color), transparent);
   }
 
-  .param-card[data-param="ta"] { --param-color: #ff4f6d; }
-  .param-card[data-param="bpm"] { --param-color: #ff8c42; }
+  .param-card[data-param="ta"]   { --param-color: #ff4f6d; }
+  .param-card[data-param="bpm"]  { --param-color: #ff8c42; }
   .param-card[data-param="spo2"] { --param-color: #00c8ff; }
   .param-card[data-param="temp"] { --param-color: #ffd166; }
+  .param-card[data-param="glyc"] { --param-color: #b47fff; }
 
   .param-icon { font-size: 2rem; margin-bottom: 0.5rem; }
 
@@ -595,12 +527,7 @@
     transition: all 0.3s ease;
   }
 
-  .param-unit {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    letter-spacing: 0.15em;
-    margin-bottom: 0.8rem;
-  }
+  .param-unit { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 0.8rem; }
 
   .param-status {
     display: inline-block;
@@ -614,50 +541,21 @@
     margin-bottom: 1rem;
   }
 
-  .param-status.normal {
-    color: var(--accent2);
-    border-color: var(--accent2);
-    background: rgba(0,255,163,0.07);
-  }
-
-  .param-status.warning {
-    color: var(--accent4);
-    border-color: var(--accent4);
-    background: rgba(255,209,102,0.07);
-  }
-
-  .param-status.alert {
-    color: var(--accent3);
-    border-color: var(--accent3);
-    background: rgba(255,79,109,0.07);
-    animation: alert-pulse 1s ease-in-out infinite;
-  }
+  .param-status.normal  { color: var(--accent2); border-color: var(--accent2); background: rgba(0,255,163,0.07); }
+  .param-status.warning { color: var(--accent4); border-color: var(--accent4); background: rgba(255,209,102,0.07); }
+  .param-status.alert   { color: var(--accent3); border-color: var(--accent3); background: rgba(255,79,109,0.07); animation: alert-pulse 1s ease-in-out infinite; }
 
   @keyframes alert-pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(255,79,109,0.4); }
     50% { box-shadow: 0 0 0 6px rgba(255,79,109,0); }
   }
 
-  .param-wave {
-    height: 35px;
-    width: 100%;
-    overflow: hidden;
-    margin-bottom: 0.8rem;
-  }
-
+  .param-wave { height: 35px; width: 100%; overflow: hidden; margin-bottom: 0.8rem; }
   .param-wave svg { width: 200%; animation: wave-scroll 2s linear infinite; }
 
-  @keyframes wave-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
+  @keyframes wave-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  .param-norm {
-    font-size: 0.65rem;
-    color: var(--text-dim);
-    font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 0.05em;
-  }
+  .param-norm { font-size: 0.65rem; color: var(--text-dim); font-family: 'Share Tech Mono', monospace; letter-spacing: 0.05em; }
 
   .param-btn {
     width: 100%;
@@ -678,13 +576,7 @@
   .param-btn:hover { background: rgba(255,255,255,0.04); }
   .param-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .measuring-indicator {
-    display: none;
-    align-items: center; justify-content: center;
-    gap: 4px;
-    margin: 0.5rem 0;
-  }
-
+  .measuring-indicator { display: none; align-items: center; justify-content: center; gap: 4px; margin: 0.5rem 0; }
   .measuring-indicator.active { display: flex; }
 
   .measure-dot {
@@ -702,7 +594,6 @@
     30% { transform: translateY(-6px); opacity: 1; }
   }
 
-  /* ALL PARAMS BUTTON */
   .all-params-btn {
     display: block; width: 100%;
     max-width: 400px; margin: 0 auto 2rem;
@@ -725,7 +616,6 @@
     box-shadow: var(--glow), inset 0 0 20px rgba(0,200,255,0.03);
   }
 
-  /* ══════════════════════ IMAGE LIBRARY INFO ══════════════════════ */
   .library-info {
     background: rgba(0,200,255,0.04);
     border: 1px solid rgba(0,200,255,0.15);
@@ -739,7 +629,6 @@
 
   .library-info-icon { font-size: 1.2rem; }
 
-  /* ══════════════════════ SAMPLE IMAGES (placeholder) ══════════════════════ */
   .img-placeholder {
     width: 100%;
     height: 180px;
@@ -769,17 +658,12 @@
     border: 1px solid rgba(0,200,255,0.15);
   }
 
-  /* ══════════════════════ CORNER DECORATIONS ══════════════════════ */
-  .corner-tl, .corner-tr, .corner-bl, .corner-br {
-    position: absolute; width: 12px; height: 12px;
-  }
-
+  .corner-tl, .corner-tr, .corner-bl, .corner-br { position: absolute; width: 12px; height: 12px; }
   .corner-tl { top: 0; left: 0; border-top: 2px solid var(--card-accent, var(--accent)); border-left: 2px solid var(--card-accent, var(--accent)); }
   .corner-tr { top: 0; right: 0; border-top: 2px solid var(--card-accent, var(--accent)); border-right: 2px solid var(--card-accent, var(--accent)); }
   .corner-bl { bottom: 0; left: 0; border-bottom: 2px solid var(--card-accent, var(--accent)); border-left: 2px solid var(--card-accent, var(--accent)); }
   .corner-br { bottom: 0; right: 0; border-bottom: 2px solid var(--card-accent, var(--accent)); border-right: 2px solid var(--card-accent, var(--accent)); }
 
-  /* ══════════════════════ NOTIFICATIONS ══════════════════════ */
   #notification {
     position: fixed; top: 1.5rem; right: 1.5rem;
     background: var(--panel2);
@@ -798,7 +682,6 @@
 
   #notification.show { transform: translateX(0); }
 
-  /* ══════════════════════ WAVEFORM PARAM ══════════════════════ */
   .ecg-container {
     height: 45px;
     overflow: hidden;
@@ -810,7 +693,6 @@
 
   .ecg-canvas { width: 100%; height: 100%; }
 
-  /* ══════════════════════ RESPONSIVE ══════════════════════ */
   @media (max-width: 600px) {
     .content { padding: 1rem; }
     .tab-btn { padding: 0.8rem 0.9rem; font-size: 0.65rem; }
@@ -820,7 +702,7 @@
 </head>
 <body>
 
-<!-- ══════════════════════ LOCK SCREEN ══════════════════════ -->
+<!-- LOCK SCREEN -->
 <div id="lock-screen">
   <div class="lock-logo">MEDI<span>SCAN</span></div>
   <div class="lock-subtitle">Système d'Assistance Médicale v2.4</div>
@@ -833,7 +715,6 @@
     </div>
     <div class="fp-core">
       <svg class="fp-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#00c8ff" stroke-width="2.5" stroke-linecap="round">
-        <!-- Fingerprint lines -->
         <path d="M50 15 C65 15, 80 28, 80 45 C80 65, 65 80, 50 82 C35 80, 20 65, 20 45 C20 28, 35 15, 50 15"/>
         <path d="M50 22 C62 22, 73 32, 73 45 C73 60, 62 73, 50 75 C38 73, 27 60, 27 45 C27 32, 38 22, 50 22"/>
         <path d="M50 30 C59 30, 66 37, 66 45 C66 55, 59 64, 50 67 C41 64, 34 55, 34 45 C34 37, 41 30, 50 30"/>
@@ -849,7 +730,7 @@
   <div class="lock-status" id="lockStatus"></div>
 </div>
 
-<!-- ══════════════════════ MAIN APP ══════════════════════ -->
+<!-- MAIN APP -->
 <div id="app">
   <header class="app-header">
     <div class="app-logo">MEDI<span>SCAN</span></div>
@@ -868,7 +749,7 @@
 
   <div class="content">
 
-    <!-- ══════ EXAMENS ══════ -->
+    <!-- EXAMENS -->
     <div class="tab-content active" id="tab-exams">
       <div class="section-title">Section Examen</div>
 
@@ -907,19 +788,13 @@
               <div class="loading-bar-track"><div class="loading-bar-fill" id="irm-bar"></div></div>
               <div class="loading-text" id="irm-loading-text">Initialisation...</div>
             </div>
-            <div class="result-placeholder" id="irm-placeholder">
-              <div>⬡</div>
-              <div>Sélectionner une zone</div>
-              <div>puis lancer l'examen</div>
-            </div>
+            <div class="result-placeholder" id="irm-placeholder"><div>⬡</div><div>Sélectionner une zone</div><div>puis lancer l'examen</div></div>
             <div class="result-image-container" id="irm-img-container">
               <img class="result-image" id="irm-img" src="" alt="IRM">
               <div class="result-image-label" id="irm-img-label"></div>
             </div>
           </div>
-          <button class="action-btn" id="irm-btn" onclick="startExam('irm')">
-            <span>⟡ Démarrer l'examen IRM</span>
-          </button>
+          <button class="action-btn" id="irm-btn" onclick="startExam('irm')"><span>⟡ Démarrer l'examen IRM</span></button>
         </div>
 
         <!-- RADIOLOGIE -->
@@ -950,19 +825,13 @@
               <div class="loading-bar-track"><div class="loading-bar-fill" id="radio-bar"></div></div>
               <div class="loading-text" id="radio-loading-text">Initialisation...</div>
             </div>
-            <div class="result-placeholder" id="radio-placeholder">
-              <div>⬡</div>
-              <div>Sélectionner une zone</div>
-              <div>puis lancer l'examen</div>
-            </div>
+            <div class="result-placeholder" id="radio-placeholder"><div>⬡</div><div>Sélectionner une zone</div><div>puis lancer l'examen</div></div>
             <div class="result-image-container" id="radio-img-container">
               <img class="result-image" id="radio-img" src="" alt="Radio">
               <div class="result-image-label" id="radio-img-label"></div>
             </div>
           </div>
-          <button class="action-btn" id="radio-btn" onclick="startExam('radio')">
-            <span>⟡ Démarrer l'examen Radiologique</span>
-          </button>
+          <button class="action-btn" id="radio-btn" onclick="startExam('radio')"><span>⟡ Démarrer l'examen Radiologique</span></button>
         </div>
 
         <!-- ÉCHOGRAPHIE -->
@@ -993,25 +862,19 @@
               <div class="loading-bar-track"><div class="loading-bar-fill" id="echo-bar"></div></div>
               <div class="loading-text" id="echo-loading-text">Initialisation...</div>
             </div>
-            <div class="result-placeholder" id="echo-placeholder">
-              <div>⬡</div>
-              <div>Sélectionner une zone</div>
-              <div>puis lancer l'examen</div>
-            </div>
+            <div class="result-placeholder" id="echo-placeholder"><div>⬡</div><div>Sélectionner une zone</div><div>puis lancer l'examen</div></div>
             <div class="result-image-container" id="echo-img-container">
               <img class="result-image" id="echo-img" src="" alt="Échographie">
               <div class="result-image-label" id="echo-img-label"></div>
             </div>
           </div>
-          <button class="action-btn" id="echo-btn" onclick="startExam('echo')">
-            <span>⟡ Démarrer l'échographie</span>
-          </button>
+          <button class="action-btn" id="echo-btn" onclick="startExam('echo')"><span>⟡ Démarrer l'échographie</span></button>
         </div>
 
       </div>
     </div>
 
-    <!-- ══════ PARAMÈTRES ══════ -->
+    <!-- PARAMÈTRES -->
     <div class="tab-content" id="tab-params">
       <div class="section-title">Section Paramètres Vitaux</div>
 
@@ -1031,9 +894,7 @@
           <div class="param-value" id="val-ta">—/—</div>
           <div class="param-unit">mmHg</div>
           <div class="measuring-indicator" id="meas-ta">
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
+            <div class="measure-dot"></div><div class="measure-dot"></div><div class="measure-dot"></div>
           </div>
           <div class="param-status normal" id="status-ta">EN ATTENTE</div>
           <div class="param-norm">Norme : 120/80 mmHg</div>
@@ -1050,9 +911,7 @@
           <div class="param-value" id="val-bpm">—</div>
           <div class="param-unit">BPM</div>
           <div class="measuring-indicator" id="meas-bpm">
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
+            <div class="measure-dot"></div><div class="measure-dot"></div><div class="measure-dot"></div>
           </div>
           <div class="param-status normal" id="status-bpm">EN ATTENTE</div>
           <div class="param-norm">Norme : 60 – 100 BPM</div>
@@ -1069,9 +928,7 @@
           <div class="param-value" id="val-spo2">—</div>
           <div class="param-unit">%</div>
           <div class="measuring-indicator" id="meas-spo2">
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
+            <div class="measure-dot"></div><div class="measure-dot"></div><div class="measure-dot"></div>
           </div>
           <div class="param-status normal" id="status-spo2">EN ATTENTE</div>
           <div class="param-norm">Norme : ≥ 98%</div>
@@ -1088,28 +945,38 @@
           <div class="param-value" id="val-temp">—</div>
           <div class="param-unit">°C</div>
           <div class="measuring-indicator" id="meas-temp">
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
-            <div class="measure-dot"></div>
+            <div class="measure-dot"></div><div class="measure-dot"></div><div class="measure-dot"></div>
           </div>
           <div class="param-status normal" id="status-temp">EN ATTENTE</div>
           <div class="param-norm">Norme : 36.5°C – 37.5°C</div>
           <button class="param-btn" onclick="measureParam('temp')">Mesurer Température</button>
         </div>
 
+        <!-- GLYCÉMIE -->
+        <div class="param-card" data-param="glyc">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="param-icon">🩸</div>
+          <div class="param-name">Glycémie</div>
+          <div class="ecg-container"><canvas class="ecg-canvas" id="ecg-glyc"></canvas></div>
+          <div class="param-value" id="val-glyc">—</div>
+          <div class="param-unit">mmol/L</div>
+          <div class="measuring-indicator" id="meas-glyc">
+            <div class="measure-dot"></div><div class="measure-dot"></div><div class="measure-dot"></div>
+          </div>
+          <div class="param-status normal" id="status-glyc">EN ATTENTE</div>
+          <div class="param-norm">Norme à jeun : 3.9 – 5.5 mmol/L</div>
+          <button class="param-btn" onclick="measureParam('glyc')">Mesurer Glycémie</button>
+        </div>
+
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /app -->
+  </div>
+</div>
 
 <div id="notification"></div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     CONFIGURATION BIBLIOTHÈQUE D'IMAGES
-     Renseignez ici vos images pour chaque type et zone.
-     Format : { "zone": ["image1.jpg", "image2.jpg", ...] }
-════════════════════════════════════════════════════════════════ -->
 <script>
 const IMAGE_LIBRARY = {
   irm: {
@@ -1123,14 +990,14 @@ const IMAGE_LIBRARY = {
     poignet:  ["images/irm/poignet_01.jpg"],
   },
   radio: {
-    thorax:     ["images/radio/thorax_01.jpg", "images/radio/thorax_02.jpg"],
-    main:       ["images/radio/main_01.jpg"],
-    pied:       ["images/radio/pied_01.jpg", "images/radio/pied_02.jpg"],
-    bassin:     ["images/radio/bassin_01.jpg"],
-    colonne:    ["images/radio/rachis_01.jpg"],
-    crane:      ["images/radio/crane_01.jpg"],
+    thorax:       ["images/radio/thorax_01.jpg", "images/radio/thorax_02.jpg"],
+    main:         ["images/radio/main_01.jpg"],
+    pied:         ["images/radio/pied_01.jpg", "images/radio/pied_02.jpg"],
+    bassin:       ["images/radio/bassin_01.jpg"],
+    colonne:      ["images/radio/rachis_01.jpg"],
+    crane:        ["images/radio/crane_01.jpg"],
     "avant-bras": ["images/radio/avant-bras_01.jpg"],
-    jambe:      ["images/radio/jambe_01.jpg"],
+    jambe:        ["images/radio/jambe_01.jpg"],
   },
   echo: {
     abdomen:      ["images/echo/abdomen_01.jpg", "images/echo/abdomen_02.jpg"],
@@ -1146,9 +1013,7 @@ const IMAGE_LIBRARY = {
 </script>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// AUDIO ENGINE — Sons générés par Web Audio API
-// ══════════════════════════════════════════════════════════════
+// AUDIO ENGINE
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let ctx;
 
@@ -1188,7 +1053,6 @@ function playNoise(duration, volume = 0.05, delay = 0) {
   src.start(ac.currentTime + delay); src.stop(ac.currentTime + delay + duration + 0.05);
 }
 
-// Son scan empreinte
 function sfxFingerprint() {
   playNoise(0.3, 0.04);
   playTone(300, 0.2, 'sine', 0.08, 0.05);
@@ -1196,14 +1060,11 @@ function sfxFingerprint() {
   playTone(900, 0.15, 'sine', 0.06, 0.3);
 }
 
-// Son accès validé
 function sfxUnlock() {
   [523, 659, 784, 1047].forEach((f, i) => playTone(f, 0.18, 'sine', 0.12, i * 0.1));
 }
 
-// Son IRM — bruit magnétique sourd
 function sfxIRM() {
-  const ac = getCtx();
   for (let i = 0; i < 8; i++) {
     playTone(80 + Math.random() * 40, 0.15, 'square', 0.06, i * 0.18);
     playNoise(0.1, 0.03, i * 0.18 + 0.05);
@@ -1211,7 +1072,6 @@ function sfxIRM() {
   playTone(200, 0.5, 'sine', 0.04, 1.5);
 }
 
-// Son Radio — bip court + clac
 function sfxRadio() {
   playTone(1200, 0.05, 'square', 0.1);
   playNoise(0.08, 0.12, 0.02);
@@ -1220,7 +1080,6 @@ function sfxRadio() {
   playNoise(0.05, 0.1, 1.2);
 }
 
-// Son Écho — ultrasons pulsés
 function sfxEcho() {
   for (let i = 0; i < 12; i++) {
     playTone(2000 + Math.random() * 1000, 0.06, 'sine', 0.04, i * 0.12);
@@ -1228,18 +1087,15 @@ function sfxEcho() {
   playTone(400, 0.3, 'sine', 0.03, 1.4);
 }
 
-// Son résultat OK
 function sfxSuccess() {
   playTone(880, 0.12, 'sine', 0.08);
   playTone(1100, 0.15, 'sine', 0.1, 0.15);
 }
 
-// Son mesure TA
 function sfxMesureTA() {
   for (let i = 0; i < 5; i++) playTone(120, 0.08, 'square', 0.05, i * 0.25);
 }
 
-// Son mesure BPM
 function sfxMesureBPM() {
   for (let i = 0; i < 6; i++) {
     playTone(440, 0.05, 'sine', 0.12, i * 0.18);
@@ -1247,31 +1103,33 @@ function sfxMesureBPM() {
   }
 }
 
-// Son mesure SpO2
 function sfxMesureSpo2() {
   for (let i = 0; i < 8; i++) playTone(1800 - i * 50, 0.07, 'sine', 0.04, i * 0.14);
 }
 
-// Son mesure Température
 function sfxMesureTemp() {
   playTone(600, 0.8, 'sine', 0.04);
   playTone(620, 0.8, 'sine', 0.02, 0.1);
 }
 
-// Son alerte
+// Son glycémie — bip doux montant, évoque la goutte de sang analysée
+function sfxMesureGlyc() {
+  playTone(520, 0.12, 'sine', 0.06);
+  playTone(660, 0.12, 'sine', 0.07, 0.15);
+  playTone(780, 0.1,  'sine', 0.05, 0.30);
+  for (let i = 0; i < 4; i++) playTone(900 + i * 30, 0.06, 'sine', 0.04, 0.5 + i * 0.18);
+}
+
 function sfxAlert() {
   [800, 600, 800, 600].forEach((f, i) => playTone(f, 0.12, 'square', 0.1, i * 0.18));
 }
 
-// Son param normal
 function sfxParamNormal() {
   playTone(660, 0.1, 'sine', 0.08);
   playTone(880, 0.15, 'sine', 0.08, 0.12);
 }
 
-// ══════════════════════════════════════════════════════════════
 // LOCK SCREEN
-// ══════════════════════════════════════════════════════════════
 let scanRunning = false;
 
 function startScan() {
@@ -1282,12 +1140,7 @@ function startScan() {
   btn.classList.add('scanning');
   sfxFingerprint();
 
-  const msgs = [
-    'Lecture de l\'empreinte...',
-    'Analyse biométrique...',
-    'Vérification identité...',
-    'Accès autorisé ✓'
-  ];
+  const msgs = ["Lecture de l'empreinte...", 'Analyse biométrique...', 'Vérification identité...', 'Accès autorisé ✓'];
   let i = 0;
   status.textContent = msgs[0];
   const iv = setInterval(() => {
@@ -1315,9 +1168,7 @@ function unlockApp() {
   }, 800);
 }
 
-// ══════════════════════════════════════════════════════════════
 // SESSION TIMER
-// ══════════════════════════════════════════════════════════════
 let sessionStart;
 function startSessionTimer() {
   sessionStart = Date.now();
@@ -1330,9 +1181,7 @@ function startSessionTimer() {
   }, 1000);
 }
 
-// ══════════════════════════════════════════════════════════════
 // TABS
-// ══════════════════════════════════════════════════════════════
 function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1340,34 +1189,11 @@ function switchTab(name) {
   document.getElementById(`tab-${name}`).classList.add('active');
 }
 
-// ══════════════════════════════════════════════════════════════
 // EXAM ENGINE
-// ══════════════════════════════════════════════════════════════
 const EXAM_STEPS = {
-  irm: [
-    'Initialisation séquence T1...',
-    'Calibration champ magnétique...',
-    'Acquisition coupes axiales...',
-    'Reconstruction 3D...',
-    'Traitement post-acquisition...',
-    'Image prête ✓'
-  ],
-  radio: [
-    'Positionnement détecteur...',
-    'Réglage paramètres kV/mAs...',
-    'Exposition rayons X...',
-    'Développement numérique...',
-    'Optimisation contraste...',
-    'Cliché disponible ✓'
-  ],
-  echo: [
-    'Activation transducteur...',
-    'Réglage fréquence ultrasons...',
-    'Acquisition mode B...',
-    'Traitement doppler...',
-    'Reconstruction échographique...',
-    'Image disponible ✓'
-  ]
+  irm: ['Initialisation séquence T1...', 'Calibration champ magnétique...', 'Acquisition coupes axiales...', 'Reconstruction 3D...', 'Traitement post-acquisition...', 'Image prête ✓'],
+  radio: ['Positionnement détecteur...', 'Réglage paramètres kV/mAs...', 'Exposition rayons X...', 'Développement numérique...', 'Optimisation contraste...', 'Cliché disponible ✓'],
+  echo: ['Activation transducteur...', 'Réglage fréquence ultrasons...', 'Acquisition mode B...', 'Traitement doppler...', 'Reconstruction échographique...', 'Image disponible ✓']
 };
 
 const EXAM_SFX = { irm: sfxIRM, radio: sfxRadio, echo: sfxEcho };
@@ -1396,7 +1222,6 @@ function startExam(type) {
   const duration = EXAM_DURATION[type];
   const stepTime = duration / steps.length;
   let step = 0;
-
   loadingText.textContent = steps[0];
 
   const iv = setInterval(() => {
@@ -1411,7 +1236,6 @@ function startExam(type) {
     }
   }, stepTime);
 
-  // Animate bar smoothly
   let pct = 0;
   const barInterval = setInterval(() => {
     pct = Math.min(pct + 1, 98);
@@ -1431,15 +1255,10 @@ function showExamResult(type, zone, loading, imgContainer, placeholder, btn) {
     const label = document.getElementById(`${type}-img-label`);
 
     img.onerror = () => {
-      // Image not found — show placeholder info
       loading.classList.remove('active');
       imgContainer.classList.add('visible');
       img.style.display = 'none';
-      label.innerHTML = `<div class="img-placeholder">
-        <div class="img-icon">🖼️</div>
-        <div class="img-text">Image non trouvée</div>
-        <div class="img-path">${src}</div>
-      </div>`;
+      label.innerHTML = `<div class="img-placeholder"><div class="img-icon">🖼️</div><div class="img-text">Image non trouvée</div><div class="img-path">${src}</div></div>`;
       label.style.width = '100%';
     };
 
@@ -1460,9 +1279,7 @@ function showExamResult(type, zone, loading, imgContainer, placeholder, btn) {
   showNotification(`Examen ${type.toUpperCase()} terminé — ${zone}`);
 }
 
-// ══════════════════════════════════════════════════════════════
 // PARAMÈTRES VITAUX
-// ══════════════════════════════════════════════════════════════
 function rand(min, max, decimals = 0) {
   const v = Math.random() * (max - min) + min;
   return decimals > 0 ? parseFloat(v.toFixed(decimals)) : Math.round(v);
@@ -1472,15 +1289,10 @@ const PARAM_CONFIG = {
   ta: {
     sfx: sfxMesureTA,
     generate: () => {
-      // ~70% normal, ~20% pré-hypertension, ~10% alerte
       const r = Math.random();
-      if (r < 0.7) {
-        return { value: `${rand(110,130)}/${rand(70,85)}`, status: 'normal', label: 'NORMAL' };
-      } else if (r < 0.9) {
-        return { value: `${rand(130,149)}/${rand(85,94)}`, status: 'warning', label: 'ÉLEVÉE' };
-      } else {
-        return { value: `${rand(150,180)}/${rand(95,110)}`, status: 'alert', label: 'HYPERTENSION' };
-      }
+      if (r < 0.7)  return { value: `${rand(110,130)}/${rand(70,85)}`, status: 'normal',  label: 'NORMAL' };
+      if (r < 0.9)  return { value: `${rand(130,149)}/${rand(85,94)}`, status: 'warning', label: 'ÉLEVÉE' };
+      return              { value: `${rand(150,180)}/${rand(95,110)}`, status: 'alert',   label: 'HYPERTENSION' };
     },
     delay: 2200
   },
@@ -1488,9 +1300,9 @@ const PARAM_CONFIG = {
     sfx: sfxMesureBPM,
     generate: () => {
       const r = Math.random();
-      if (r < 0.75) return { value: rand(62, 98), status: 'normal', label: 'NORMAL' };
-      if (r < 0.88) return { value: rand(100, 130), status: 'warning', label: 'TACHYCARDIE' };
-      return { value: rand(35, 59), status: 'alert', label: 'BRADYCARDIE' };
+      if (r < 0.75) return { value: rand(62, 98),   status: 'normal',  label: 'NORMAL' };
+      if (r < 0.88) return { value: rand(100, 130),  status: 'warning', label: 'TACHYCARDIE' };
+      return              { value: rand(35, 59),    status: 'alert',   label: 'BRADYCARDIE' };
     },
     delay: 1800
   },
@@ -1498,9 +1310,9 @@ const PARAM_CONFIG = {
     sfx: sfxMesureSpo2,
     generate: () => {
       const r = Math.random();
-      if (r < 0.8) return { value: rand(98, 100), status: 'normal', label: 'NORMAL' };
-      if (r < 0.92) return { value: rand(94, 97), status: 'warning', label: 'LIMITE' };
-      return { value: rand(85, 93), status: 'alert', label: 'DÉSATURATION' };
+      if (r < 0.8)  return { value: rand(98, 100), status: 'normal',  label: 'NORMAL' };
+      if (r < 0.92) return { value: rand(94, 97),  status: 'warning', label: 'LIMITE' };
+      return              { value: rand(85, 93),   status: 'alert',   label: 'DÉSATURATION' };
     },
     delay: 1600
   },
@@ -1508,15 +1320,30 @@ const PARAM_CONFIG = {
     sfx: sfxMesureTemp,
     generate: () => {
       const r = Math.random();
-      if (r < 0.75) return { value: rand(36.5, 37.5, 1), status: 'normal', label: 'NORMAL' };
-      if (r < 0.9) return { value: rand(37.5, 39.0, 1), status: 'warning', label: 'HYPERTHERMIE' };
-      return { value: rand(39.0, 41.0, 1), status: 'alert', label: 'FIÈVRE ÉLEVÉE' };
+      if (r < 0.75) return { value: rand(36.5, 37.5, 1), status: 'normal',  label: 'NORMAL' };
+      if (r < 0.9)  return { value: rand(37.5, 39.0, 1), status: 'warning', label: 'HYPERTHERMIE' };
+      return              { value: rand(39.0, 41.0, 1), status: 'alert',   label: 'FIÈVRE ÉLEVÉE' };
     },
     delay: 2000
+  },
+  glyc: {
+    sfx: sfxMesureGlyc,
+    generate: () => {
+      const r = Math.random();
+      // Norme à jeun : 3.9–5.5 mmol/L
+      // Pré-diabète : 5.6–6.9 mmol/L
+      // Diabète / hyperglycémie : ≥ 7.0 mmol/L
+      // Hypoglycémie : < 3.9 mmol/L
+      if (r < 0.65) return { value: rand(3.9, 5.5, 1), status: 'normal',  label: 'NORMAL' };
+      if (r < 0.80) return { value: rand(5.6, 6.9, 1), status: 'warning', label: 'PRÉ-DIABÈTE' };
+      if (r < 0.93) return { value: rand(7.0, 12.0, 1), status: 'alert',  label: 'HYPERGLYCÉMIE' };
+      return              { value: rand(2.2, 3.8, 1),  status: 'alert',   label: 'HYPOGLYCÉMIE' };
+    },
+    delay: 1900
   }
 };
 
-const paramBusy = { ta: false, bpm: false, spo2: false, temp: false };
+const paramBusy = { ta: false, bpm: false, spo2: false, temp: false, glyc: false };
 
 function measureParam(id) {
   if (paramBusy[id]) return;
@@ -1525,10 +1352,10 @@ function measureParam(id) {
   const config = PARAM_CONFIG[id];
   config.sfx();
 
-  const valEl = document.getElementById(`val-${id}`);
+  const valEl    = document.getElementById(`val-${id}`);
   const statusEl = document.getElementById(`status-${id}`);
-  const measEl = document.getElementById(`meas-${id}`);
-  const btn = document.querySelector(`[data-param="${id}"] .param-btn`);
+  const measEl   = document.getElementById(`meas-${id}`);
+  const btn      = document.querySelector(`[data-param="${id}"] .param-btn`);
 
   valEl.textContent = '...';
   statusEl.textContent = 'MESURE...';
@@ -1536,7 +1363,6 @@ function measureParam(id) {
   measEl.classList.add('active');
   btn.disabled = true;
 
-  // Animate value counting up
   let tick = 0;
   const scramble = setInterval(() => {
     tick++;
@@ -1553,8 +1379,7 @@ function measureParam(id) {
     btn.disabled = false;
     paramBusy[id] = false;
 
-    if (result.status === 'alert') sfxAlert();
-    else if (result.status === 'warning') sfxAlert();
+    if (result.status === 'alert' || result.status === 'warning') sfxAlert();
     else sfxParamNormal();
 
     showNotification(`${id.toUpperCase()}: ${result.value} — ${result.label}`);
@@ -1563,18 +1388,16 @@ function measureParam(id) {
 }
 
 function measureAllParams() {
-  ['ta','bpm','spo2','temp'].forEach((id, i) => {
+  ['ta','bpm','spo2','temp','glyc'].forEach((id, i) => {
     setTimeout(() => measureParam(id), i * 600);
   });
 }
 
-// ══════════════════════════════════════════════════════════════
-// ECG CANVAS ANIMATION
-// ══════════════════════════════════════════════════════════════
+// ECG CANVAS
 const ecgAnimations = {};
 
 function initECGCanvases() {
-  ['ta','bpm','spo2','temp'].forEach(id => drawIdleECG(id));
+  ['ta','bpm','spo2','temp','glyc'].forEach(id => drawIdleECG(id));
 }
 
 function drawIdleECG(id) {
@@ -1584,7 +1407,7 @@ function drawIdleECG(id) {
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
   const w = canvas.width; const h = canvas.height;
-  const colors = { ta: '#ff4f6d', bpm: '#ff8c42', spo2: '#00c8ff', temp: '#ffd166' };
+  const colors = { ta: '#ff4f6d', bpm: '#ff8c42', spo2: '#00c8ff', temp: '#ffd166', glyc: '#b47fff' };
   const c = colors[id];
 
   ctx2.clearRect(0, 0, w, h);
@@ -1605,7 +1428,7 @@ function animateECG(id, status) {
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
   const w = canvas.width; const h = canvas.height;
-  const colors = { ta: '#ff4f6d', bpm: '#ff8c42', spo2: '#00c8ff', temp: '#ffd166' };
+  const colors = { ta: '#ff4f6d', bpm: '#ff8c42', spo2: '#00c8ff', temp: '#ffd166', glyc: '#b47fff' };
   const c = colors[id];
 
   if (ecgAnimations[id]) cancelAnimationFrame(ecgAnimations[id]);
@@ -1613,9 +1436,15 @@ function animateECG(id, status) {
   let offset = 0;
   const amplitude = status === 'alert' ? 18 : status === 'warning' ? 12 : 8;
 
-  function drawECGWave(x, h, amplitude, id) {
+  // Pour la glycémie, une courbe sinusoïdale douce (pas un ECG cardiaque)
+  function drawGlycWave(x, h, amplitude) {
     const mid = h / 2;
-    // Simulate ECG: flat, P wave, QRS complex, T wave
+    const pos = x % 80;
+    return mid + Math.sin(pos * 0.08) * amplitude * 1.2 + Math.sin(pos * 0.25) * amplitude * 0.4;
+  }
+
+  function drawECGWave(x, h, amplitude) {
+    const mid = h / 2;
     const pos = x % 120;
     if (pos < 30) return mid + Math.sin(pos * 0.2) * (amplitude * 0.3);
     if (pos < 40) return mid - Math.sin((pos - 30) * 0.3) * (amplitude * 0.5);
@@ -1634,7 +1463,9 @@ function animateECG(id, status) {
     ctx2.lineWidth = 1.5;
     ctx2.beginPath();
     for (let x = 0; x < w; x++) {
-      const y = drawECGWave(x + offset, h, amplitude, id);
+      const y = id === 'glyc'
+        ? drawGlycWave(x + offset, h, amplitude)
+        : drawECGWave(x + offset, h, amplitude);
       x === 0 ? ctx2.moveTo(x, y) : ctx2.lineTo(x, y);
     }
     ctx2.stroke();
@@ -1649,9 +1480,7 @@ function animateECG(id, status) {
   }, 5000);
 }
 
-// ══════════════════════════════════════════════════════════════
 // NOTIFICATIONS
-// ══════════════════════════════════════════════════════════════
 let notifTimer;
 function showNotification(msg, type = 'info') {
   const el = document.getElementById('notification');
