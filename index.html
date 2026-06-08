@@ -960,12 +960,12 @@
           <div class="param-name">Glycémie</div>
           <div class="ecg-container"><canvas class="ecg-canvas" id="ecg-glyc"></canvas></div>
           <div class="param-value" id="val-glyc">—</div>
-          <div class="param-unit">mmol/L</div>
+          <div class="param-unit">mg/dL</div>
           <div class="measuring-indicator" id="meas-glyc">
             <div class="measure-dot"></div><div class="measure-dot"></div><div class="measure-dot"></div>
           </div>
           <div class="param-status normal" id="status-glyc">EN ATTENTE</div>
-          <div class="param-norm">Norme à jeun : 3.9 – 5.5 mmol/L</div>
+          <div class="param-norm">Norme à jeun : 70 – 99 mg/dL</div>
           <button class="param-btn" onclick="measureParam('glyc')">Mesurer Glycémie</button>
         </div>
 
@@ -1330,14 +1330,14 @@ const PARAM_CONFIG = {
     sfx: sfxMesureGlyc,
     generate: () => {
       const r = Math.random();
-      // Norme à jeun : 3.9–5.5 mmol/L
-      // Pré-diabète : 5.6–6.9 mmol/L
-      // Diabète / hyperglycémie : ≥ 7.0 mmol/L
-      // Hypoglycémie : < 3.9 mmol/L
-      if (r < 0.65) return { value: rand(3.9, 5.5, 1), status: 'normal',  label: 'NORMAL' };
-      if (r < 0.80) return { value: rand(5.6, 6.9, 1), status: 'warning', label: 'PRÉ-DIABÈTE' };
-      if (r < 0.93) return { value: rand(7.0, 12.0, 1), status: 'alert',  label: 'HYPERGLYCÉMIE' };
-      return              { value: rand(2.2, 3.8, 1),  status: 'alert',   label: 'HYPOGLYCÉMIE' };
+      // Norme à jeun : 70–99 mg/dL
+      // Pré-diabète : 100–125 mg/dL
+      // Diabète / hyperglycémie : ≥ 126 mg/dL
+      // Hypoglycémie : < 70 mg/dL
+      if (r < 0.65) return { value: rand(70,  99),  status: 'normal',  label: 'NORMAL' };
+      if (r < 0.80) return { value: rand(100, 125),  status: 'warning', label: 'PRÉ-DIABÈTE' };
+      if (r < 0.93) return { value: rand(126, 280),  status: 'alert',   label: 'HYPERGLYCÉMIE' };
+      return              { value: rand(40,  69),   status: 'alert',   label: 'HYPOGLYCÉMIE' };
     },
     delay: 1900
   }
